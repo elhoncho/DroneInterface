@@ -30,7 +30,7 @@ def ReadRadioInput():
         except Empty:
             break
         else:
-            print("Got: "+line)
+            #print("Got: "+line)
             newCmd = 1
             command = line.strip()
 
