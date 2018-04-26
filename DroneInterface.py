@@ -5,7 +5,7 @@ from dronekit import connect, VehicleMode
 vehicle = connect("/dev/serial0", baud=57600, wait_ready=True)
 gpsData = "%s\n" % vehicle.location.global_frame
 
-p = subprocess.Popen(['../RaspberryPiDrone'],
+p = subprocess.Popen(['../RaspberryPiDronea'],
                      stdin=subprocess.PIPE)
 p.stdin.write(gpsData)
 
