@@ -5,6 +5,7 @@ from subprocess import PIPE, Popen
 from threading  import Thread
 
 newCmd = 0
+command = ""
 
 try:
     from Queue import Queue, Empty
@@ -20,6 +21,9 @@ def enqueue_output(out, queue):
     out.close()
 
 def ReadRadioInput():
+    global newCmd
+    global command
+
     while True:
         try:
             line = q.get_nowait() # or q.get(timeout=.1)
@@ -28,9 +32,9 @@ def ReadRadioInput():
         else:
             print("Got: "+line)
             newCmd = 1
-            command = line
+            command = line.strip()
 
-p = Popen(['./RaspberryPiDrone'], stdin=PIPE, stdout=PIPE, bufsize=1, close_fds=ON_POSIX)
+p = Popen(['../RaspberryPiDrone'], stdin=PIPE, stdout=PIPE, bufsize=1, close_fds=ON_POSIX)
 q = Queue()
 t = Thread(target=enqueue_output, args=(p.stdout, q))
 t.daemon = True # thread dies with the program
@@ -60,6 +64,7 @@ while True:
     time.sleep(1)
     if newCmd == 1:
         newCmd = 0
+	print("Executing: "+command)
         exec(command)
 
 vehicle.close()
