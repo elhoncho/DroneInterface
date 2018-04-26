@@ -35,6 +35,7 @@ def ReadRadioInput():
             command = line.strip()
 
 p = Popen(['../RaspberryPiDrone'], stdin=PIPE, stdout=PIPE, bufsize=1, close_fds=ON_POSIX)
+sys.stdout = p.stdin
 q = Queue()
 t = Thread(target=enqueue_output, args=(p.stdout, q))
 t.daemon = True # thread dies with the program
@@ -48,16 +49,14 @@ while not vehicle.is_armable:
     print(" Waiting for vehicle to initialise...")
     time.sleep(1)
 
-print("Arming Motors")
-vehicle.mode = VehicleMode("GUIDED")
-vehicle.armed = True
-
-while not vehicle.armed:
-    print("Waiting for arming...")
-    time.sleep(1)
-
-#print("Taking off!")
-#vehicle.simple_takeoff(10) # Take off to target altitude
+# vehicle.armed = True
+# vehicle.mode = VehicleMode("GUIDED")
+# vehicle.simple_takeoff(10)
+# vehicle.mode = VehicleMode("LAND")
+# 
+# print "Global Location: %s" % vehicle.location.global_frame
+# print "%s" % vehicle.mode
+# print "%s" % vehicle.armed
 
 while True:
     ReadRadioInput()
