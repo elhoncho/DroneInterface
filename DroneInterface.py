@@ -25,6 +25,7 @@ def ReadRadioInput():
     global command
 
     print("Reading Inputs")
+    p.stdin.write("\r\nThump thump"+str(time.time())+"\r\n")
     while True:
         try:
             line = q.get_nowait() # or q.get(timeout=.1)
@@ -42,7 +43,11 @@ t = Thread(target=enqueue_output, args=(p.stdout, q))
 t.daemon = True # thread dies with the program
 t.start()
 
-vehicle = connect("/dev/serial0", baud=57600, wait_ready=True)
+try:
+    vehicle = connect("/dev/serial0", baud=57600, wait_ready=True)
+except:
+    print("Error Connecting")
+    exit()
 
 print("Basic pre-arm checks")
 while not vehicle.is_armable:
@@ -65,9 +70,14 @@ while True:
     time.sleep(1)
     if newCmd == 1:
         newCmd = 0
-	print("Executing: "+command)
-        p.stdin.write("Executing :"+command+"\r\n")
-        exec(command)
+	print("Executing: ("+command+")")
+        p.stdin.write("\r\nExecuting :"+command+"\r\n")
+        try:
+            exec(command)
+        except:
+            print("Bad Command")
+            p.stdin.write("\r\nBad Command\r\n")
+            continue
         p.stdin.write("\r\n%s\r\n" % vehicle.location.global_frame)
 vehicle.close()
 p.kill()
