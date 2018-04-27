@@ -24,31 +24,33 @@ def ReadRadioInput():
     global newCmd
     global command
 
+    print("Reading Inputs")
     while True:
         try:
             line = q.get_nowait() # or q.get(timeout=.1)
         except Empty:
             break
         else:
-            #print("Got: "+line)
+            print("Got: "+line)
             newCmd = 1
             command = line.strip()
 
 p = Popen(['../RaspberryPiDrone'], stdin=PIPE, stdout=PIPE, bufsize=1, close_fds=ON_POSIX)
-sys.stdout = p.stdin
+#sys.stdout = p.stdin
 q = Queue()
 t = Thread(target=enqueue_output, args=(p.stdout, q))
 t.daemon = True # thread dies with the program
 t.start()
 
 vehicle = connect("/dev/serial0", baud=57600, wait_ready=True)
-gpsData = "%s\n" % vehicle.location.global_frame
 
 print("Basic pre-arm checks")
 while not vehicle.is_armable:
     print(" Waiting for vehicle to initialise...")
     time.sleep(1)
+print("Basic pre-are checks complete")
 
+#gpsData = "%s\n" % vehicle.location.global_frame
 # vehicle.armed = True
 # vehicle.mode = VehicleMode("GUIDED")
 # vehicle.simple_takeoff(10)
@@ -64,7 +66,8 @@ while True:
     if newCmd == 1:
         newCmd = 0
 	print("Executing: "+command)
+        p.stdin.write("Executing :"+command+"\r\n")
         exec(command)
-
+        p.stdin.write("\r\n%s\r\n" % vehicle.location.global_frame)
 vehicle.close()
 p.kill()
