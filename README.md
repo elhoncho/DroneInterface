@@ -3,9 +3,11 @@
 Building a Cross Compiler on Mac OSX
 
 -------First Step--------
+
 Reinstalled osx with case sensitive partition
 
 ------Install Toolchain-------
+
 install jdk
 xcode-select --install
 
@@ -40,6 +42,7 @@ ct-ng build
 
 
 -------Get sysroot of target-----------
+
 brew install rsync
 mkdir sysroot
 rsync -rzLR --safe-links \
@@ -52,6 +55,7 @@ rsync -rzLR --safe-links \
 rsync -rzLR --safe-links pi@192.168.1.101:/usr/local/lib/ pi@192.168.1.101:/usr/local/include/ sysroo
 
 -----Setup Eclipse--------
+
 Right click project->properties
 	Cross Settings
 		Prefix: armv6-rpi-linux-gnueabi-
@@ -68,5 +72,7 @@ Right click project->properties
 
 
 ------Update Binaries------
+
 Install sshpass
+
 sshpass -p 'raspberry' scp Debug/RaspberryPi pi@192.168.1.101:/home/pi/test/
